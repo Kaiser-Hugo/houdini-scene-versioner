@@ -27,9 +27,16 @@ Exemple complet : `sh010_fx_v004.hip`
 ## 3. Fonctionnalités
 
 ### F1 — Version up
-- Lire le nom de la scène ouverte et en extraire `shot`, `task`, version.
-- Sauvegarder la scène sous la version suivante.
-- Scène non versionnée (`untitled.hip`, nom libre) : demander `shot` et `task` (avec validation), puis créer `v001`.
+- Une seule fenêtre de dialogue avec trois champs : shot, task, commentaire, et les boutons OK / Annuler.
+- Scène conforme à la convention (`sh010_anim_v051.hip`) : shot et task sont pré-remplis à partir du nom ; l'artiste peut les garder ou les modifier.
+- Scène non conforme (`untitled.hip`, nom libre) : les champs sont vides, l'artiste doit les remplir.
+- Saisie invalide (majuscules, espaces, caractères spéciaux) : message d'erreur et nouvelle saisie.
+- Le dossier de destination est déduit du shot et de la task (voir Arborescence).
+- La version créée est la plus haute version existante dans ce dossier + 1, ou `v001` s'il n'en existe aucune (voir F2).
+- Annuler n'a aucun effet : ni fichier, ni dossier créé.
+
+**Branchement de task** : modifier la task dans le dialogue crée une nouvelle série de versions dans le dossier de cette task.
+Exemple : depuis `sh010_anim_v051.hip`, choisir `fx` crée `sh010_fx_v001.hip` (ou la version suivante si des versions FX existent déjà).
 
 ### F2 — Sécurité
 - Ne jamais écraser un fichier existant.
