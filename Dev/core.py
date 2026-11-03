@@ -6,7 +6,7 @@ NAME_PART_PATTERN = r"[a-z0-9]+"
 
 def parse_scene_name(scene_name: str) -> tuple[str, str, int] | None:
 	"""Split a scene file name into (shot, task, version)."""
-	split_name = re.fullmatch(rf"({NAME_PART_PATTERN})_({NAME_PART_PATTERN})_v(\d{{3}})\.hip", scene_name)
+	split_name = re.fullmatch(rf"({NAME_PART_PATTERN})_({NAME_PART_PATTERN})_v(\d{{3}})\.(?:hip|hipnc|hiplc)", scene_name)
 
 	if split_name is None:
 		return None
@@ -17,9 +17,9 @@ def parse_scene_name(scene_name: str) -> tuple[str, str, int] | None:
 	return shot, task, version
 
 
-def build_scene_name(shot: str, task: str, version: int) -> str:
+def build_scene_name(shot: str, task: str, version: int, extension: str = "hip") -> str:
 	"""Build scene name from shot, task and version"""
-	new_scene_name = f"{shot}_{task}_v{version:03d}.hip"
+	new_scene_name = f"{shot}_{task}_v{version:03d}.{extension}"
 	return new_scene_name
 
 
@@ -27,7 +27,7 @@ def get_next_version(folder: Path, shot: str, task: str) -> int:
 	"""Get a free version of a scene name"""
 	version_list = []
 
-	for file in folder.glob("*.hip"):
+	for file in folder.glob("*.hip*"):
 		parts = parse_scene_name(file.name)
 		if parts is None:
 			continue
@@ -47,7 +47,7 @@ def is_valid_name_part(name_part: str) -> bool:
 
 def build_scene_folder(root: Path, shot: str, task: str) -> Path:
 	"""Return root/shots/<shot>/<task>."""
-	folder_path = root / "shots" / f"{shot}/{task}"
+	folder_path = root / "shots" / shot / task
 	return folder_path
 
 
