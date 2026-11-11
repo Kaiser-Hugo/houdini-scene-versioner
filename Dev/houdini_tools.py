@@ -1,10 +1,12 @@
-from os import mkdir
-from pathlib import Path
-
+import datetime
+import getpass
 import hou
 
+from datetime import datetime
+from pathlib import Path
+
 from core import (parse_scene_name, build_scene_name, get_next_version,
-                  is_valid_name_part, build_scene_folder)
+                  is_valid_name_part, build_scene_folder,write_metadata)
 
 LICENSE_EXTENSIONS = {
     hou.licenseCategoryType.Apprentice: "hipnc",
@@ -17,6 +19,8 @@ LICENSE_EXTENSIONS = {
 def version_up():
     """Save the current scene as a new version."""
     scene_name = hou.hipFile.basename()
+    is_new_scene = hou.hipFile.isNewFile()
+    source = None if is_new_scene else scene_name
 
     split_name = parse_scene_name(scene_name)
     if split_name is None:
@@ -59,6 +63,25 @@ def version_up():
 
     extension = LICENSE_EXTENSIONS.get(hou.licenseCategory(), "hip")
     file_name = build_scene_name(shot, task, version, extension)
+    scene_path = folder / file_name
 
     folder.mkdir(parents=True, exist_ok=True)
-    hou.hipFile.save(str(folder / file_name))
+    hou.hipFile.save(str(scene_path))
+
+    houdini_range = hou.playbar.frameRange()
+    frame_range = [int(houdini_range[0]), int(houdini_range[1])]
+
+    metadata = {
+        "shot": shot,
+        "task": task,
+        "version": version,
+        "comment": comment,
+        "user": getpass.getuser(),
+        "date": datetime.now().isoformat(),
+        "houdini_version": hou.applicationVersionString(),
+        "frame_range": frame_range,
+        "source": source,
+    }
+
+    json_path = scene_path.with_suffix(".json")
+    write_metadata(json_path,metadata)
