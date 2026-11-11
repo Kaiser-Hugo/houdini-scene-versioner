@@ -1,6 +1,7 @@
 from pathlib import Path
 
-from core import parse_scene_name, build_scene_name, get_next_version, is_valid_name_part, build_scene_folder
+from core import (parse_scene_name, build_scene_name, get_next_version, is_valid_name_part, build_scene_folder,
+				  read_metadata, write_metadata)
 
 
 def test_parse_valid_name():
@@ -70,3 +71,25 @@ def test_valid_name_part_rejects_empty():
 
 def test_build_scene_folder():
 	assert build_scene_folder(Path("/projet"), "sh010", "fx") == Path("/projet/shots/sh010/fx")
+
+
+def test_metadata_roundtrip(tmp_path):
+	metadata = {"shot": "shot010", "task": "fx", "version": 2}
+	json_path = tmp_path / "test.json"
+
+	write_metadata(json_path, metadata)
+
+	assert read_metadata(json_path) == metadata
+
+
+def test_read_metadata_missing_file(tmp_path):
+	assert read_metadata(tmp_path / "missing.json") == {}
+
+
+def test_metadata_keeps_accents(tmp_path):
+	metadata = {"shot": "shot010", "task": "fx", "version": 2, "comment": "éclairage corrigé"}
+	json_path = tmp_path / "test.json"
+
+	write_metadata(json_path, metadata)
+
+	assert read_metadata(json_path) == metadata

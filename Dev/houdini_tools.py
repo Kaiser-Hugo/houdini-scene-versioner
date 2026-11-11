@@ -26,7 +26,7 @@ def version_up():
         default_shot, default_task, _ = split_name
 
     result = hou.ui.readMultiInput(
-        "Version up de la scène",
+        "Scene Name",
         input_labels=("Shot", "Task", "Commentaire"),
         buttons=("OK", "Annuler"),
         initial_contents=(default_shot, default_task, ""),

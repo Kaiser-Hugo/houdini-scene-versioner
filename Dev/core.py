@@ -1,4 +1,5 @@
 import re
+import json
 from pathlib import Path
 
 NAME_PART_PATTERN = r"[a-z0-9]+"
@@ -49,6 +50,19 @@ def build_scene_folder(root: Path, shot: str, task: str) -> Path:
 	"""Return root/shots/<shot>/<task>."""
 	folder_path = root / "shots" / shot / task
 	return folder_path
+
+
+def write_metadata(json_path: Path, metadata: dict) -> None:
+	"""Write the metadata dict to a JSON file."""
+	with json_path.open("w", encoding="utf-8") as f:
+		json.dump(metadata, f, indent=4, ensure_ascii=False)
+
+def read_metadata(json_path: Path) -> dict:
+	"""Read metadata from a JSON file; return an empty dict if it does not exist."""
+	if not json_path.exists():
+		return {}
+	with json_path.open("r", encoding="utf-8") as f:
+		return json.load(f)
 
 
 if __name__ == "__main__":
