@@ -6,6 +6,13 @@ import hou
 from core import (parse_scene_name, build_scene_name, get_next_version,
                   is_valid_name_part, build_scene_folder)
 
+LICENSE_EXTENSIONS = {
+    hou.licenseCategoryType.Apprentice: "hipnc",
+    hou.licenseCategoryType.ApprenticeHD: "hipnc",
+    hou.licenseCategoryType.Commercial: "hip",
+    hou.licenseCategoryType.Education: "hipnc",
+    hou.licenseCategoryType.Indie: "hiplc",
+}
 
 def version_up():
     """Save the current scene as a new version."""
@@ -17,25 +24,41 @@ def version_up():
         default_task = ""
     else:
         default_shot, default_task, _ = split_name
-    print(default_shot, default_task)
-    return
 
-    button, value = hou.ui.readMultiInput(-1, split_name)
+    result = hou.ui.readMultiInput(
+        "Version up de la scène",
+        input_labels=("Shot", "Task", "Commentaire"),
+        buttons=("OK", "Annuler"),
+        initial_contents=(default_shot, default_task, ""),
+        close_choice=1,
+        title="Scene Versioner",
+    )
+
+    button, values = result
+    shot, task, comment = values
+
     if button != 0:
         return None
 
-    if is_valid_name_part(shot) or is_valid_name_part(task) is None:
-        hou.ui.diplayMessage("La task est invalide")
+
+    if not is_valid_name_part(shot):
+        hou.ui.displayMessage("shot invalid")
         return None
 
-    path = JOB/f"{build_scene_folder(shot, task)}"
-    return path
+    if not is_valid_name_part(task):
+        hou.ui.displayMessage("task invalid")
+        return None
 
-    version = get_next_version(shot, task)
-    return version
+    job = hou.getenv("JOB")
+    if job is None:
+        hou.ui.displayMessage("$JOB is not defined : impossible to save")
+        return None
+    folder = build_scene_folder(Path(job),shot, task)
 
-    file_name= build_scene_folder(shot, task)
-    return file_name
+    version = get_next_version(folder, shot, task)
 
-    mkdir(path)
-    # 8. créer le dossier, puis sauvegarder le chemin complet
+    extension = LICENSE_EXTENSIONS.get(hou.licenseCategory(), "hip")
+    file_name = build_scene_name(shot, task, version, extension)
+
+    folder.mkdir(parents=True, exist_ok=True)
+    hou.hipFile.save(str(folder / file_name))
