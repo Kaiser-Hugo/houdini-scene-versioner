@@ -1,0 +1,7 @@
+{
+    "env": [
+        { "SCENE_VERSIONER": "/home/hugo/Documents/Pipeline_Tool_II" },
+        { "PYTHONPATH": { "value": "$SCENE_VERSIONER/Dev", "method": "prepend" } }
+    ],
+    "hpath": "$SCENE_VERSIONER"
+}
