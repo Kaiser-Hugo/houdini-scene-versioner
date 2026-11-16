@@ -3,3 +3,4 @@ __pycache__/
 .idea/
 Hip/
 .pytest_cache/
+qt_sandbox.py
