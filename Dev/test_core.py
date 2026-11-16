@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from core import (parse_scene_name, build_scene_name, get_next_version, is_valid_name_part, build_scene_folder,
-				  read_metadata, write_metadata)
+				  read_metadata, write_metadata, list_versions)
 
 
 def test_parse_valid_name():
@@ -93,3 +93,38 @@ def test_metadata_keeps_accents(tmp_path):
 	write_metadata(json_path, metadata)
 
 	assert read_metadata(json_path) == metadata
+
+
+def test_list_versions_count(tmp_path):
+	create_version_files(tmp_path)
+	versions = list_versions(tmp_path, "sh010", "fx")
+
+	assert len(versions) == 3
+
+
+def test_list_versions_newest_first(tmp_path):
+	create_version_files(tmp_path)
+	versions = list_versions(tmp_path, "sh010", "fx")
+
+	assert [v["version"] for v in versions] == [5, 3, 1]
+
+
+def test_list_versions_empty_folder(tmp_path):
+	versions = list_versions(tmp_path, "sh010", "fx")
+
+	assert versions == []
+
+
+def test_list_versions_without_json(tmp_path):
+	create_version_files(tmp_path)
+	versions = list_versions(tmp_path, "sh010", "fx")
+
+	assert versions[0]["metadata"] == {}
+
+
+def test_list_versions_with_json(tmp_path):
+	create_version_files(tmp_path)
+	write_metadata(tmp_path / "sh010_fx_v005.json", {"comment": "test"})
+	versions = list_versions(tmp_path, "sh010", "fx")
+
+	assert versions[0]["metadata"] == {"comment": "test"}

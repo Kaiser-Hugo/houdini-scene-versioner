@@ -65,6 +65,27 @@ def read_metadata(json_path: Path) -> dict:
 		return json.load(f)
 
 
+def list_versions(folder: Path, shot: str, task: str) -> list[dict]:
+	"""list the versions of a scene, newest first"""
+	versions = []
+
+	for file in folder.glob("*.hip*"):
+		parts = parse_scene_name(file.name)
+		if parts is None:
+			continue
+		file_shot, file_task, file_version = parts
+		if file_shot != shot or file_task != task:
+			continue
+
+		versions.append({
+			"path": file,
+			"version": file_version,
+			"metadata": read_metadata(file.with_suffix(".json")),
+		})
+
+	return sorted(versions, key=lambda v: v["version"], reverse=True)
+
+
 if __name__ == "__main__":
 	test_folder = Path(__file__).parent.parent / "Hip" / "test_versions"
 	print(get_next_version(test_folder, "sh010", "fx"))
