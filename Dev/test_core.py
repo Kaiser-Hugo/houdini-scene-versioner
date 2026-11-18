@@ -128,3 +128,15 @@ def test_list_versions_with_json(tmp_path):
 	versions = list_versions(tmp_path, "sh010", "fx")
 
 	assert versions[0]["metadata"] == {"comment": "test"}
+
+def test_read_metadata_empty_file(tmp_path):
+	json_path = tmp_path / "test.json"
+	json_path.touch()
+
+	assert read_metadata(json_path) == {}
+
+def test_read_metadata_corrupt_file(tmp_path):
+	json_path = tmp_path / "test.json"
+	json_path.write_text("{ ceci n'est pas du json", encoding="utf-8")
+
+	assert read_metadata(json_path) == {}

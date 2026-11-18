@@ -61,8 +61,11 @@ def read_metadata(json_path: Path) -> dict:
 	"""Read metadata from a JSON file; return an empty dict if it does not exist."""
 	if not json_path.exists():
 		return {}
-	with json_path.open("r", encoding="utf-8") as f:
-		return json.load(f)
+	try:
+		with json_path.open("r", encoding="utf-8") as f:
+			return json.load(f)
+	except json.JSONDecodeError:
+		return {}
 
 
 def list_versions(folder: Path, shot: str, task: str) -> list[dict]:
