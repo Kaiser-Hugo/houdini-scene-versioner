@@ -132,5 +132,6 @@ def open_version(path):
 		if ask == 2:
 			return
 		elif ask == 0:
-			version_up()
+			if not version_up():
+				return
 	hou.hipFile.load(str(path), suppress_save_prompt=True, ignore_load_warnings=True)
