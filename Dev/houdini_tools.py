@@ -32,8 +32,8 @@ def version_up() -> bool:
 
 	result = hou.ui.readMultiInput(
 		"Scene Name",
-		input_labels=("Shot", "Task", "Commentaire"),
-		buttons=("OK", "Annuler"),
+		input_labels=("Shot", "Task", "Comment"),
+		buttons=("OK", "Cancel"),
 		initial_contents=(default_shot, default_task, ""),
 		close_choice=1,
 		title="Scene Versioner",

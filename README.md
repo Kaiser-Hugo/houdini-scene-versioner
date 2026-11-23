@@ -3,6 +3,7 @@
 A small pipeline tool for Houdini 22 that saves scenes as numbered versions following a strict naming convention, records metadata for every version, and lets artists browse and reopen any version from a panel inside Houdini.
 
 ![Scene History panel](docs/history_panel.png)
+▶ **[Watch the demo video](https://youtu.be/gLig5ggC21w)** (1 min)
 
 ## Why not just use *Save with Increment*?
 

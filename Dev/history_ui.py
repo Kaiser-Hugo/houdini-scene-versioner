@@ -47,6 +47,17 @@ def create_history_panel():
 
 	versions = []
 
+	def on_scene_event(event_type):
+		if event_type in (
+			hou.hipFileEventType.AfterSave,
+			hou.hipFileEventType.AfterLoad,
+			hou.hipFileEventType.AfterClear,
+		):
+			refresh()
+
+	hou.hipFile.addEventCallback(on_scene_event)
+	widget.destroyed.connect(lambda: hou.hipFile.removeEventCallback(on_scene_event))
+
 	def refresh():
 		nonlocal versions
 		scene_name = hou.hipFile.basename()
@@ -103,7 +114,7 @@ def create_history_panel():
 
 	refresh_button = QtWidgets.QPushButton("Refresh")
 	refresh_button.clicked.connect(refresh)
-	open_button = QtWidgets.QPushButton("Ouvrir la version")
+	open_button = QtWidgets.QPushButton("Open version")
 	open_button.clicked.connect(open_selected)
 	table.cellDoubleClicked.connect(lambda row, col: open_selected())
 
