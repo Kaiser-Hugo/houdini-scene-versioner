@@ -4,3 +4,4 @@ __pycache__/
 Hip/
 .pytest_cache/
 qt_sandbox.py
+project/
